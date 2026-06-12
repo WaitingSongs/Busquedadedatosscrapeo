@@ -1,3 +1,15 @@
+#Video De youtube donde se explica el funcionamiento 
+
+
+
+https://github.com/user-attachments/assets/c310ec59-95e6-42a2-aeb6-c61d39d3d36d
+
+
+
+
+
+
+
 # GameSir Product Scraper & Analytics
 
 Proyecto de scraping dinámico, limpieza de datos, visualización y modelado predictivo sobre el catálogo de productos GameSir.
