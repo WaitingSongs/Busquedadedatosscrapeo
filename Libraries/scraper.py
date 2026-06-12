@@ -7,9 +7,8 @@ import requests
 
 class gamesir_scraper:
 
-    def __init__(self):
-        pass
-    def scrapelinks(self):
+    @staticmethod
+    def scrapelinks():
         # Configuración Chrome
         options = Options()
         options.add_argument("--headless")  # Required for Codespaces
@@ -294,17 +293,17 @@ class gamesir_scraper:
             "link": url
         }
         #
-    def nuevocsvdeproductos(self, urls=None):
-        # Si no se pasan URLs, usa scrapeo normal
+    @staticmethod
+    def nuevocsvdeproductos(urls=None):
         if urls is None:
-            links_df = self.scrapelinks()
+            links_df = gamesir_scraper.scrapelinks()
             urls = links_df["url"].tolist()
 
         productos = []
 
         for url in urls:
             try:
-                prod = self.obtener_producto(url)
+                prod = gamesir_scraper.obtener_producto(url)
 
                 if not prod:
                     print(f"[SKIP] Producto vacío: {url}")
@@ -326,9 +325,4 @@ class gamesir_scraper:
         print(f"CSV guardado: {len(df)} productos en productos_gamesir.csv")
 if __name__ == "__main__":
     print("Iniciando scraper...")
-    gamesir = gamesir_scraper().nuevocsvdeproductos()
-    #df = scraper.scrapelinks()
-    #solo los url
-    #for index, row in df.iterrows():
-     #   print(f"{index+1}. {row['url']}")
-        
+    gamesir_scraper.nuevocsvdeproductos()
