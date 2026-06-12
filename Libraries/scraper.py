@@ -323,6 +323,7 @@ class gamesir_scraper:
         df.to_csv("productos_gamesir.csv", index=False, encoding="utf-8-sig")
 
         print(f"CSV guardado: {len(df)} productos en productos_gamesir.csv")
+#testeo
 if __name__ == "__main__":
     print("Iniciando scraper...")
     gamesir_scraper.nuevocsvdeproductos()
