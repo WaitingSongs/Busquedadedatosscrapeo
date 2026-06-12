@@ -1,66 +1,46 @@
-# Busqueda de datos / Scraping GameSir
+# GameSir Product Scraper & Analytics
 
-Este proyecto contiene ejemplos de extracción de datos y visualización de un catálogo de productos GameSir.
+Proyecto de scraping dinámico, limpieza de datos, visualización y modelado predictivo sobre el catálogo de productos GameSir.
 
-## Qué hace cada archivo
+## Estructura del proyecto
 
-- `app.py`
-  - Aplicación web creada con Streamlit.
-  - Carga `productos_gamesir.csv` y muestra los productos en una interfaz con filtros de búsqueda y categoría.
-  - Muestra precio, stock, colores, descripción, detalles e imágenes.
+```
+├── app.py                         # Dashboard Streamlit con filtros y predicción
+├── Libraries/
+│   ├── __init__.py
+│   ├── scraper.py                 # Scraping dinámico con Selenium + BeautifulSoup
+│   ├── limpieza.py                # Limpieza, transformación y análisis exploratorio
+│   └── prediccion.py              # Modelo predictivo (Random Forest + GridSearchCV)
+├── productos_gamesir.csv          # Datos crudos del scraping
+├── productos_limpios.csv          # Datos limpios listos para usar
+└── gamesir_renderizado.html       # HTML renderizado capturado por Selenium
+```
 
-- `seleniumtest.py`
-  - Define la clase `gamesir_scraper` para extraer enlaces de productos desde la página de colección de GameSir.
-  - Usa Selenium para renderizar la página, hacer scroll automático y guardar el HTML en `gamesir_renderizado.html`.
-  - Extrae los enlaces de productos y devuelve un DataFrame con las URLs.
+## Flujo del pipeline
 
-- `test.py`
-  - Script de prueba que usa Requests y BeautifulSoup para leer una página de producto.
-  - Extrae bloques de texto de descripción y detalles.
+1. **Scraping** → `scraper.py` usa Selenium para navegar la colección de GameSir, hace scroll infinito (hasta 50 iteraciones), extrae URLs de cada producto y luego visita cada uno para obtener nombre, precio, stock, colores, descripción, imágenes, etc.
+2. **Limpieza** → `limpieza.py` parsea precios a numéricos, maneja nulos (colores sin variante, stock no encontrado), clasifica productos por tipo (Control/Accesorio/Cable/Enfriamiento), asigna gama de precio (Económica/Media/Alta/Premium), concatenación masiva con datos externos y filtros agrupados.
+3. **Predicción** → `prediccion.py` entrena un RandomForestClassifier con GridSearchCV para predecir la gama de cada producto basándose en características como tipo, cantidad de colores, longitud de descripción, stock y si está en oferta.
+4. **Visualización** → `app.py` muestra el catálogo en Streamlit con filtros por texto, tipo y gama, más una tabla comparativa de gama real vs predicha.
 
-- `main.py`
-  - Ejemplo simple de uso de Selenium para abrir la página de productos y cerrar el navegador.
+## Requisitos
 
-## Requisitos de Python
-
-Las librerías necesarias actualmente son:
-
-- `streamlit`
-- `pandas`
-- `selenium`
-- `beautifulsoup4`
-- `requests`
-
-## Requisitos adicionales
-
-- Navegador Chrome o Chromium instalado.
-- `chromedriver` compatible con la versión de Chrome/Chromium.
-- El driver debe estar en el `PATH` o configurado para que Selenium pueda acceder a él.
+- Python 3.14+
+- Chrome/Chromium + chromedriver
+- Dependencias: `streamlit`, `pandas`, `selenium`, `beautifulsoup4`, `requests`, `scikit-learn`, `joblib`
 
 ## Cómo ejecutar
 
-1. Instalar dependencias:
-
 ```bash
-python -m pip install streamlit pandas selenium beautifulsoup4 requests
-```
-
-2. Ejecutar la aplicación Streamlit:
-
-```bash
-cd /home/melody/Documentos/Code/Homework/Busquedadedatosscrapeo
 streamlit run app.py
 ```
 
-3. Ejecutar el scraper de enlaces con Selenium:
+Desde la interfaz se puede presionar "Actualizar datos desde la web" para ejecutar el pipeline completo (scraping → limpieza → predicción).
+
+## Ejecución individual
 
 ```bash
-python seleniumtest.py
+.venv/bin/python3 Libraries/scraper.py
+.venv/bin/python3 Libraries/limpieza.py
+.venv/bin/python3 Libraries/prediccion.py
 ```
-
-> Nota: `seleniumtest.py` define la clase `gamesir_scraper`; para usarla deberás crear una instancia y llamar a `scrapelinks()` desde otro script o desde un intérprete.
-
-## Observaciones
-
-- El archivo `productos_gamesir.csv` ya contiene los productos que muestra `app.py`.
-- El scraper necesita tiempo de carga y puede depender de cambios en el HTML del sitio.
