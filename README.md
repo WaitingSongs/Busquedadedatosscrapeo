@@ -9,6 +9,7 @@ https://github.com/user-attachments/assets/c310ec59-95e6-42a2-aeb6-c61d39d3d36d
 
 
 
+# La pagina que se sacan los datos: https://gamesir.com/es/collections/all-products-1
 
 # GameSir Product Scraper & Analytics
 
