@@ -42,11 +42,16 @@ with st.sidebar:
     if st.button("🔄 Actualizar datos desde la web", type="primary", use_container_width=True):
         from Libraries.scraper import gamesir_scraper
         from Libraries.limpieza import DataCleaner
+        from Libraries.prediccion import GamaPredictor
 
         with st.spinner("Scrapeando productos..."):
             gamesir_scraper.nuevocsvdeproductos()
         with st.spinner("Limpiando datos..."):
             DataCleaner().ejecutar()
+        with st.spinner("Entrenando modelo predictivo..."):
+            predictor = GamaPredictor()
+            predictor.ejecutar()
+            st.session_state["prediccion_df"] = predictor.resultados
         st.success("Datos actualizados correctamente")
         st.cache_data.clear()
         st.rerun()
@@ -90,3 +95,19 @@ for _, prod in filtro.iterrows():
                 st.image(urls, width=180, caption=[f"Img {i+1}" for i in range(len(urls))])
 
         st.caption(f"[🔗 Ver producto]({prod['link']})")
+
+if "prediccion_df" in st.session_state:
+    st.divider()
+    st.subheader("🤖 Prediccion de gama - Resultados del modelo")
+    df_pred = st.session_state["prediccion_df"]
+    aciertos = df_pred["Acierto"].sum()
+    total = len(df_pred)
+    st.metric("Precision del modelo", f"{aciertos}/{total}", f"{aciertos/total*100:.1f}%")
+    st.dataframe(
+        df_pred.style.map(
+            lambda v: "background-color: #d4edda" if v else "background-color: #f8d7da",
+            subset=["Acierto"],
+        ),
+        use_container_width=True,
+        hide_index=True,
+    )
