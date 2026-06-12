@@ -12,6 +12,9 @@ class gamesir_scraper:
     def scrapelinks(self):
         # Configuración Chrome
         options = Options()
+        options.add_argument("--headless")  # Required for Codespaces
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
 
         # options.add_argument("--headless=new")
 
